@@ -171,40 +171,33 @@ const handleQuery = async (req, res) => {
 
 // Get conversation history
 const getConversation = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const conversation = await AiModel.findById(id);
-    const messages = await MessageModel.find({
-      conversationId: conversation._id,
-    });
-    // console.log(conversation, messages);
+  console.log("Fetching conversation history for ID:", req.params.id);
+  const id = req.params.id;
+  const conversation = await AiModel.findById(id);
+  const messages = await MessageModel.find({
+    conversationId: conversation._id,
+  });
+  // console.log(conversation, messages);
 
-    if (!conversation) {
-      return res.status(404).json({
-        success: false,
-        error: "Conversation not found",
-      });
-    }
-
-    res.json({
-      success: true,
-      conversation: {
-        id: conversation.id,
-        name: conversation.name,
-        type: conversation.type,
-        messages: messages,
-        createdAt: conversation.createdAt,
-        lastActivity: conversation.lastActivity,
-        messageCount: messages.length,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
+  if (!conversation) {
+    return res.status(404).json({
       success: false,
-      error: "Failed to retrieve conversation",
-      message: error.message,
+      error: "Conversation not found",
     });
   }
+
+  res.json({
+    success: true,
+    conversation: {
+      id: conversation.id,
+      name: conversation.name,
+      type: conversation.type,
+      messages: messages,
+      createdAt: conversation.createdAt,
+      lastActivity: conversation.lastActivity,
+      messageCount: messages.length,
+    },
+  });
 };
 
 // Get all conversations
