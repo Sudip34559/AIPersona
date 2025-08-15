@@ -10,7 +10,7 @@ const requestLimiter = async (req, res, next) => {
 
     // Set limits
     const dailyLimit = 20;
-    console.log(isAuthenticated, userId, dailyLimit, user);
+    // console.log(isAuthenticated, userId, dailyLimit, user);
 
     // Find existing record
     let record = await RequestLimitModel.findOne({
