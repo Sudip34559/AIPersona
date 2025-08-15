@@ -11,6 +11,7 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error("API Error:", error);
     if (error.response?.status === 410) {
       // Clear local storage
       localStorage.clear();

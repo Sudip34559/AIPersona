@@ -31,6 +31,8 @@ export function LoginForm({
         password: data.password,
       });
       if (res.data.success) {
+        console.log("Login successful", res.data);
+
         // Store user data & token
         localStorage.setItem("userData", JSON.stringify(res.data.user));
         localStorage.setItem("accessToken", res.data.accessToken);

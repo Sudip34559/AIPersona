@@ -244,3 +244,4 @@ If you have any questions or need help with the application, please open an issu
 ---
 
 **Happy Coding! 🚀**
+

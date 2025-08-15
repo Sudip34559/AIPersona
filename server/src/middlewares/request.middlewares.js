@@ -1,23 +1,26 @@
+import { Types } from "mongoose";
 import { RequestLimitModel } from "../models/request.model.js";
 import { User } from "../models/user.model.js";
 
 const requestLimiter = async (req, res, next) => {
   try {
-    const identifier = req.body.user?._id?.toString() || req.ip;
-    const user = await User.findById(identifier);
+    const userId = req.user?._id;
+    const user = await User.findById(userId);
     const isAuthenticated = user ? true : false;
 
     // Set limits
-    const dailyLimit = isAuthenticated ? 20 : 5;
-    // console.log(isAuthenticated, identifier, dailyLimit);
+    const dailyLimit = 20;
+    console.log(isAuthenticated, userId, dailyLimit, user);
 
     // Find existing record
-    let record = await RequestLimitModel.findOne({ identifier });
+    let record = await RequestLimitModel.findOne({
+      identifier: req.user?._id,
+    });
 
     // Create new record if doesn't exist
     if (!record) {
       record = await RequestLimitModel.create({
-        identifier,
+        identifier: userId,
         count: 1,
         lastReset: new Date(),
       });
@@ -48,12 +51,6 @@ const requestLimiter = async (req, res, next) => {
     };
     // Check limit
     if (record.count > dailyLimit) {
-      if (!isAuthenticated) {
-        return res.status(429).json({
-          message: "Login to increase your request limit.",
-          limit: dailyLimit,
-        });
-      }
       return res.status(429).json({
         message: "Rate limit exceeded. Try again tomorrow.",
         limit: dailyLimit,

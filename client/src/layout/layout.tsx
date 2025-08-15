@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import { Send, User, Loader2 } from "lucide-react";
+import { Send, User, Loader2, BadgeIndianRupee } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -44,6 +44,7 @@ export default function Layout() {
   const [newMessage, setNewMessage] = useState<string>("");
   const [id, setId] = useState<string>("");
   const [type, setType] = useState<string>("");
+  const [token, setToken] = useState<number>(20);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -77,6 +78,22 @@ export default function Layout() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  // const user = localStorage.getItem("user");
+  // const userData = user ? JSON.parse(user) : {};
+  useEffect(() => {
+    // Fetching token from the server
+    api
+      .get(`/user/token`) // Assuming user ID is 1 for demo purposes
+      .then((response) => {
+        console.log("Token fetched:", response);
+        setToken(20 - response.data.token.count);
+        console.log(token, "token");
+      })
+      .catch((error) => {
+        console.error("Error fetching token:", error);
+      });
+  }, [messages]);
 
   const formatTime = (timestamp: string): string => {
     return new Date(timestamp).toLocaleTimeString("en-US", {
@@ -151,7 +168,7 @@ export default function Layout() {
         Math.min(inputRef.current.scrollHeight, 120) + "px";
     }
   };
-
+  console.log(type, "type");
   return (
     <SidebarProvider
       style={
@@ -162,12 +179,20 @@ export default function Layout() {
     >
       <AppSidebar halgelSelect={halgelSelect} setId={setId} />
       <SidebarInset>
-        <header className="bg-background sticky top-0 flex shrink-0 items-center gap-2 border-b p-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
-          />
+        <header className="bg-background sticky top-0 flex shrink-0 items-center gap-2 border-b p-4 justify-between">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1" />
+
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+          </div>
+
+          <div className="flex items-center gap-1">
+            <BadgeIndianRupee size={17} />
+            {token}
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           {id.trim() ? (

@@ -1,3 +1,4 @@
+import { RequestLimitModel } from "../models/request.model.js";
 import { User } from "../models/user.model.js";
 export const generateAccessTokens = async (userId) => {
   try {
@@ -101,4 +102,21 @@ const login = async (req, res) => {
   }
 };
 
-export { register, login };
+const token = async (req, res) => {
+  const id = req.user._id;
+  const token = await RequestLimitModel.findOne({ identifier: id });
+  console.log(`Token for user ${id}:`, token);
+
+  if (!token) {
+    return res.status(404).json({
+      success: false,
+      error: "Token not found",
+    });
+  }
+  res.status(200).json({
+    success: true,
+    token: token,
+  });
+};
+
+export { register, login, token };

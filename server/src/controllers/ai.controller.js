@@ -66,6 +66,8 @@ const handleQuery = async (req, res) => {
 
     // console.log(type);
 
+    console.log(`Handling query for conversation ${id}:`, query);
+
     if (!query) {
       return res.status(400).json({
         success: false,
@@ -170,7 +172,7 @@ const handleQuery = async (req, res) => {
 // Get conversation history
 const getConversation = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const conversation = await AiModel.findById(id);
     const messages = await MessageModel.find({
       conversationId: conversation._id,
